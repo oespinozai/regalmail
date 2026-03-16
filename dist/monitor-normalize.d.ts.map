@@ -1,0 +1,1 @@
+{"version":3,"file":"monitor-normalize.d.ts","sourceRoot":"","sources":["../src/monitor-normalize.ts"],"names":[],"mappings":"AAAA;;;GAGG;AACH,OAAO,KAAK,EAAE,UAAU,EAAiB,MAAM,YAAY,CAAC;AAC5D,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,YAAY,CAAC;AAiClD;;GAEG;AACH,wBAAgB,cAAc,CAAC,MAAM,EAAE,UAAU,GAAG,eAAe,CAsDlE;AAED;;;GAGG;AACH,wBAAgB,cAAc,CAAC,KAAK,EAAE,eAAe,GAAG,MAAM,CAmB7D"}
