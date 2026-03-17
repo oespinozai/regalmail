@@ -4,6 +4,21 @@
  */
 import { createTransport, type Transporter } from "nodemailer";
 import type { ResolvedEmailAccount, NormalizedEmail } from "./types.js";
+import { checkSendLimit, recordSend, type TierName } from "./tiers.js";
+
+/** Current tier — set via setTier() on startup from config */
+let currentTier: TierName = "free";
+
+export function setTier(tier: TierName): void {
+  currentTier = tier;
+}
+
+function enforceSendLimit(): void {
+  const check = checkSendLimit(currentTier);
+  if (!check.ok) {
+    throw new Error(check.error);
+  }
+}
 
 /** Cache transporter instances per account to reuse connections */
 const transporters = new Map<string, Transporter>();
@@ -44,6 +59,7 @@ export type SendReplyOptions = {
  * Send a reply to an inbound email with proper threading headers.
  */
 export async function sendEmailReply(options: SendReplyOptions): Promise<{ messageId: string }> {
+  enforceSendLimit();
   const { account, inReplyTo, body, subject } = options;
   const transport = getTransporter(account);
 
@@ -69,6 +85,7 @@ export async function sendEmailReply(options: SendReplyOptions): Promise<{ messa
     },
   });
 
+  recordSend();
   return { messageId: result.messageId };
 }
 
@@ -84,6 +101,7 @@ export type SendNewEmailOptions = {
  * Send a new (non-reply) email.
  */
 export async function sendNewEmail(options: SendNewEmailOptions): Promise<{ messageId: string }> {
+  enforceSendLimit();
   const { account, to, subject, body, html } = options;
   const transport = getTransporter(account);
 
@@ -95,6 +113,7 @@ export async function sendNewEmail(options: SendNewEmailOptions): Promise<{ mess
     ...(html ? { html } : {}),
   });
 
+  recordSend();
   return { messageId: result.messageId };
 }
 

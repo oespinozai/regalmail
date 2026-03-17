@@ -12,6 +12,7 @@ import type { ResolvedEmailAccount, NormalizedEmail } from "./types.js";
 import { normalizeEmail, buildAgentBody } from "./monitor-normalize.js";
 import { shouldSkipReply, cleanRateLimits } from "./anti-loop.js";
 import { matchAccountByRecipient } from "./accounts.js";
+import { validateMailboxCount, type TierName } from "./tiers.js";
 
 const IDLE_RENEW_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_BACKOFF_MS = 5 * 60 * 1000; // 5 minutes
@@ -24,6 +25,8 @@ export type EmailMonitorOptions = {
   imapAccount: ResolvedEmailAccount;
   /** Abort signal for graceful shutdown */
   abortSignal?: AbortSignal;
+  /** RegalMail tier for enforcing mailbox limits */
+  tier?: TierName;
   /** Called when a new email arrives and passes anti-loop checks */
   onEmail: (email: NormalizedEmail, matchedAccount: ResolvedEmailAccount) => Promise<void>;
   /** Optional logger */
@@ -40,7 +43,13 @@ export type EmailMonitorOptions = {
  * Reconnects automatically on connection loss.
  */
 export async function startEmailMonitor(options: EmailMonitorOptions): Promise<void> {
-  const { accounts, imapAccount, abortSignal, onEmail, log } = options;
+  const { accounts, imapAccount, abortSignal, onEmail, log, tier = "free" } = options;
+
+  // Enforce mailbox limit
+  const mailboxCheck = validateMailboxCount(tier, accounts.length);
+  if (!mailboxCheck.ok) {
+    throw new Error(mailboxCheck.error);
+  }
 
   // Collect all own addresses for anti-loop protection
   const ownAddresses = accounts.map((a) => a.email);

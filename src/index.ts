@@ -48,5 +48,7 @@ export default plugin;
 
 // Re-export types for consumers
 export type { ResolvedEmailAccount, EmailAccountConfig, NormalizedEmail } from "./types.js";
-export { sendEmailReply, sendNewEmail } from "./send.js";
+export { sendEmailReply, sendNewEmail, setTier } from "./send.js";
 export { probeEmailAccount } from "./probe.js";
+export { getTierLimits, validateMailboxCount, checkSendLimit, getUsageStats } from "./tiers.js";
+export type { TierName } from "./tiers.js";

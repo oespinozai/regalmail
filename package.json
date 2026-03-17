@@ -1,7 +1,12 @@
 {
-  "name": "openclaw-plugin-email",
+  "name": "regalmail",
   "version": "0.1.0",
-  "description": "Email channel plugin for OpenClaw — IMAP IDLE inbound + SMTP outbound",
+  "description": "Email channel plugin for AI agents — IMAP IDLE inbound + SMTP outbound with tier-based limits",
+  "homepage": "https://alvento.ltd/email-plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alvento/regalmail"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,12 +33,14 @@
     "vitest": "^2.1.0"
   },
   "keywords": [
+    "regalmail",
     "openclaw",
-    "plugin",
+    "ai-agent",
     "email",
     "imap",
     "smtp",
-    "channel"
+    "channel",
+    "plugin"
   ],
   "author": "Alvento Ltd",
   "license": "MIT",
