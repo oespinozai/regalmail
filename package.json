@@ -1,7 +1,7 @@
 {
   "name": "regalmail",
-  "version": "0.1.0",
-  "description": "Email channel plugin for AI agents — IMAP IDLE inbound + SMTP outbound with tier-based limits",
+  "version": "0.2.0",
+  "description": "Email channel plugin for AI agents — IMAP IDLE inbound + SMTP outbound with Stripe billing, tiers, and usage tracking",
   "homepage": "https://alvento.ltd/email-plugin",
   "repository": {
     "type": "git",
@@ -23,13 +23,14 @@
   "dependencies": {
     "imapflow": "^1.0.171",
     "mailparser": "^3.7.0",
-    "nodemailer": "^6.9.0"
+    "nodemailer": "^6.9.0",
+    "stripe": "^20.4.1"
   },
   "devDependencies": {
     "@types/mailparser": "^3.4.6",
-    "@types/nodemailer": "^6.4.0",
+    "@types/nodemailer": "^6.4.17",
     "tsx": "^4.21.0",
-    "typescript": "^5.7.0",
+    "typescript": "^5.9.3",
     "vitest": "^2.1.0"
   },
   "keywords": [
@@ -40,7 +41,9 @@
     "imap",
     "smtp",
     "channel",
-    "plugin"
+    "plugin",
+    "stripe",
+    "billing"
   ],
   "author": "Alvento Ltd",
   "license": "MIT",
