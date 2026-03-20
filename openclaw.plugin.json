@@ -1,5 +1,7 @@
 {
   "id": "email",
+  "name": "RegalMail",
+  "description": "Email channel plugin for AI agents via IMAP inbound and SMTP outbound",
   "channels": ["email"],
   "configSchema": {
     "type": "object",

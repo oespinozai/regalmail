@@ -4,6 +4,10 @@
 
 Give your AI agents a real email inbox. New emails arrive in real-time via IMAP IDLE (push, not polling). Replies go out via SMTP with correct threading headers so they land in the right email thread.
 
+OpenClaw runtime identity:
+- Plugin/channel id: `email`
+- Product/package name: `regalmail`
+
 ## Install
 
 ```bash
