@@ -1,6 +1,6 @@
 {
   "name": "regalmail",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Email channel plugin for AI agents — IMAP IDLE inbound + SMTP outbound with Stripe billing, tiers, and usage tracking",
   "homepage": "https://alvento.ltd/email-plugin",
   "repository": {
@@ -10,6 +10,11 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "openclaw.plugin.json"
+  ],
   "scripts": {
     "build": "npx tsc",
     "dev": "tsc --watch",

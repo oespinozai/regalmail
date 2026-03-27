@@ -11,10 +11,12 @@ import {
   resolveEmailAccount,
   matchAccountByRecipient,
 } from "./accounts.js";
-import { sendEmailReply, sendNewEmail, closeAllTransporters } from "./send.js";
+import { sendEmailReply, sendNewEmail, closeAllTransporters, setInternalBypass } from "./send.js";
 import { startEmailMonitor } from "./monitor.js";
 import { buildAgentBody } from "./monitor-normalize.js";
 import { probeEmailAccount } from "./probe.js";
+import path from "node:path";
+import os from "node:os";
 
 // NOTE: ChannelPlugin type comes from openclaw/plugin-sdk.
 // Since we can't import it at build time without the peer dep installed,
@@ -24,6 +26,20 @@ import { probeEmailAccount } from "./probe.js";
 //   import type { ChannelPlugin } from "openclaw/plugin-sdk";
 
 const DEFAULT_ACCOUNT_ID = "default";
+
+function resolveSessionStorePath(cfg: any, route: { agentId: string }, core: any) {
+  const rawStore = cfg?.session?.store;
+  if (typeof rawStore === "string" && rawStore.trim()) {
+    const expanded = rawStore.includes("{agentId}")
+      ? rawStore.replaceAll("{agentId}", route.agentId)
+      : rawStore;
+    if (expanded.startsWith("~")) {
+      return path.resolve(path.join(os.homedir(), expanded.slice(1)));
+    }
+    return path.resolve(expanded);
+  }
+  return path.join(core.state.resolveStateDir(cfg), "agents", route.agentId, "sessions", "sessions.json");
+}
 
 export const emailPlugin = {
   id: "email",
@@ -109,6 +125,7 @@ export const emailPlugin = {
     textChunkLimit: 100000, // Emails can be long
 
     sendText: async ({ cfg, to, text, accountId }: any) => {
+      setInternalBypass(Boolean(cfg?.channels?.email?.internalBypass));
       const account = resolveEmailAccount(cfg, accountId ?? DEFAULT_ACCOUNT_ID);
       const result = await sendNewEmail({
         account,
@@ -153,6 +170,8 @@ export const emailPlugin = {
       const account: ResolvedEmailAccount = ctx.account;
       const core = getEmailRuntime();
       const cfg = ctx.cfg;
+      const internalBypass = Boolean(cfg?.channels?.email?.internalBypass);
+      setInternalBypass(internalBypass);
 
       ctx.log?.info(`[email:${account.accountId}] Starting IMAP monitor for ${account.email}`);
 
@@ -165,6 +184,7 @@ export const emailPlugin = {
         imapAccount: account,
         abortSignal: ctx.abortSignal,
         log: ctx.log,
+        internalBypass,
         onEmail: async (email, matchedAccount) => {
           // Build the agent-facing message body
           const agentBody = buildAgentBody(email);
@@ -201,7 +221,7 @@ export const emailPlugin = {
           // Record session activity
           try {
             core.channel.session.recordInboundSession({
-              storePath: core.state.resolveStateDir(cfg),
+              storePath: resolveSessionStorePath(cfg, route, core),
               sessionKey: route.sessionKey,
               ctx: msgCtx,
               onRecordError: (err: unknown) => {

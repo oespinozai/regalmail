@@ -8,12 +8,20 @@ import { checkSendLimit, recordSend, type TierName } from "./tiers.js";
 
 /** Current tier — set via setTier() on startup from config */
 let currentTier: TierName = "free";
+let internalBypass = false;
 
 export function setTier(tier: TierName): void {
   currentTier = tier;
 }
 
+export function setInternalBypass(enabled: boolean): void {
+  internalBypass = enabled;
+}
+
 function enforceSendLimit(): void {
+  if (internalBypass) {
+    return;
+  }
   const check = checkSendLimit(currentTier);
   if (!check.ok) {
     throw new Error(check.error);

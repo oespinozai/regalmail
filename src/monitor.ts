@@ -27,6 +27,8 @@ export type EmailMonitorOptions = {
   abortSignal?: AbortSignal;
   /** RegalMail tier for enforcing mailbox limits */
   tier?: TierName;
+  /** Internal deployment bypass for private first-party use */
+  internalBypass?: boolean;
   /** Called when a new email arrives and passes anti-loop checks */
   onEmail: (email: NormalizedEmail, matchedAccount: ResolvedEmailAccount) => Promise<void>;
   /** Optional logger */
@@ -43,12 +45,14 @@ export type EmailMonitorOptions = {
  * Reconnects automatically on connection loss.
  */
 export async function startEmailMonitor(options: EmailMonitorOptions): Promise<void> {
-  const { accounts, imapAccount, abortSignal, onEmail, log, tier = "free" } = options;
+  const { accounts, imapAccount, abortSignal, onEmail, log, tier = "free", internalBypass = false } = options;
 
   // Enforce mailbox limit
-  const mailboxCheck = validateMailboxCount(tier, accounts.length);
-  if (!mailboxCheck.ok) {
-    throw new Error(mailboxCheck.error);
+  if (!internalBypass) {
+    const mailboxCheck = validateMailboxCount(tier, accounts.length);
+    if (!mailboxCheck.ok) {
+      throw new Error(mailboxCheck.error);
+    }
   }
 
   // Collect all own addresses for anti-loop protection

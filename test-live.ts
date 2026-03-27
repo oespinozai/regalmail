@@ -25,18 +25,27 @@ const CONFIG = {
       smtpHost: "smtp.email.uk-london-1.oci.oraclecloud.com",
       smtpPort: 587,
       accounts: {
-        hello: { email: "hello@alvento.ltd", displayName: "Amara" },
-        sales: { email: "sales@alvento.ltd", displayName: "Alvento Sales" },
-        support: { email: "support@alvento.ltd", displayName: "Alvento Support" },
-        maeve: { email: "maeve@alvento.ltd", displayName: "Maeve O'Brien" },
-        priya: { email: "priya@alvento.ltd", displayName: "Priya P." },
-        contact: { email: "contact@alvento.ltd", displayName: "Alvento" },
+        hello: { email: "hello@alvento.ltd", displayName: "Helena Lopez" },
+        sales: { email: "sales@alvento.ltd", displayName: "Sabrina Ellis" },
+        support: { email: "support@alvento.ltd", displayName: "Susan Powers" },
+        hope: { email: "hope@alvento.ltd", displayName: "Hope" },
+        billing: { email: "billing@alvento.ltd", displayName: "Fiona Nash" },
+        accounts: { email: "accounts@alvento.ltd", displayName: "Fiona Nash" },
+        mkt: { email: "mkt@alvento.ltd", displayName: "Mara Kent" },
       },
     },
   },
 };
 
-const OWN_ADDRESSES = ["hello@alvento.ltd", "sales@alvento.ltd", "support@alvento.ltd", "maeve@alvento.ltd", "priya@alvento.ltd", "contact@alvento.ltd"];
+const OWN_ADDRESSES = [
+  "hello@alvento.ltd",
+  "sales@alvento.ltd",
+  "support@alvento.ltd",
+  "hope@alvento.ltd",
+  "billing@alvento.ltd",
+  "accounts@alvento.ltd",
+  "mkt@alvento.ltd",
+];
 
 async function main() {
   console.log("Connecting to IMAP...");
