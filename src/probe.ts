@@ -40,6 +40,13 @@ async function probeImap(
       logger: false,
     });
 
+    // Prevent imapflow's internal state machine from emitting unhandled
+    // 'error' events (e.g. "Already logged out") that would crash the host.
+    (client as unknown as { on: (ev: string, fn: (e: unknown) => void) => void })
+      .on?.("error", () => {
+        // Swallowed; probe reports its own failure via the catch below.
+      });
+
     const safeClose = () => {
       try {
         const maybe = (client as unknown as { close?: () => unknown }).close?.();
