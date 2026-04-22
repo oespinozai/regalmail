@@ -94,6 +94,20 @@ RegalMail manages subscriptions via Stripe. Set your customer ID and tier in con
 - **Portal**: `getCustomerPortalUrl(customerId)` → self-serve billing management
 - **Status**: `getSubscriptionStatus(customerId)` → current tier and period end
 
+## Self-Hosted Mode
+
+If you run RegalMail inside your own OpenClaw gateway and the SaaS billing
+model does not apply to you, set the environment variable:
+
+```bash
+export REGALMAIL_SELF_HOSTED=1
+```
+
+This bypasses `validateMailboxCount` and `checkSendLimit` unconditionally —
+you can configure unlimited mailboxes and send unlimited messages. External
+SaaS users should leave this unset so normal Stripe-backed tier enforcement
+applies.
+
 ## CLI
 
 ```bash

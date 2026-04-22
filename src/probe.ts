@@ -40,12 +40,26 @@ async function probeImap(
       logger: false,
     });
 
-    const timeout = setTimeout(() => client.close(), timeoutMs);
+    const safeClose = () => {
+      try {
+        const maybe = (client as unknown as { close?: () => unknown }).close?.();
+        if (maybe && typeof (maybe as Promise<unknown>).catch === "function") {
+          (maybe as Promise<unknown>).catch(() => {});
+        }
+      } catch {
+        // Benign — e.g. "Already logged out" when the session already ended.
+      }
+    };
+    const timeout = setTimeout(safeClose, timeoutMs);
 
     try {
       await client.connect();
       clearTimeout(timeout);
-      await client.logout();
+      try {
+        await client.logout();
+      } catch {
+        // Ignore benign logout errors (e.g. "Already logged out").
+      }
       return { ok: true, latencyMs: Date.now() - start };
     } finally {
       clearTimeout(timeout);

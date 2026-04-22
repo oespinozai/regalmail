@@ -54,10 +54,22 @@ export function getTierLimits(tier: TierName): TierLimits {
   return TIERS[tier] ?? TIERS.free;
 }
 
+/**
+ * When REGALMAIL_SELF_HOSTED=1, tier limits are bypassed entirely.
+ * Intended for self-hosters running their own OpenClaw gateway where
+ * the SaaS billing model does not apply.
+ */
+function isSelfHosted(): boolean {
+  return process.env.REGALMAIL_SELF_HOSTED === "1";
+}
+
 export function validateMailboxCount(
   tier: TierName,
   mailboxCount: number
 ): { ok: boolean; error?: string } {
+  if (isSelfHosted()) {
+    return { ok: true };
+  }
   const limits = getTierLimits(tier);
   if (mailboxCount > limits.maxMailboxes) {
     return {
@@ -73,6 +85,9 @@ export function checkSendLimit(tier: TierName): {
   remaining: number;
   error?: string;
 } {
+  if (isSelfHosted()) {
+    return { ok: true, remaining: Number.POSITIVE_INFINITY };
+  }
   const limits = getTierLimits(tier);
   const usage = readUsage();
   const remaining = limits.maxEmailsPerMonth - usage.sent;

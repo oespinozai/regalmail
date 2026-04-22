@@ -1,6 +1,6 @@
 {
   "name": "regalmail",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Email channel plugin for AI agents — IMAP IDLE inbound + SMTP outbound with Stripe billing, tiers, and usage tracking",
   "homepage": "https://alvento.ltd/email-plugin",
   "repository": {
